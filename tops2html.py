@@ -3,14 +3,14 @@ import os
 import datetime  
 from jinja2 import Environment, FileSystemLoader  
 
-APP_PATH = os.path.join('/', 'StijgersDalers')  
+APP_PATH = os.path.join('.')  
 
 def get_tables():  
     '''retrieves table data from pickles and the last pickle's modify date'''  
 
     def make_path(filename):  
-        # from:  \StijgersDalers\pickles\*.pkl  
-        # must be absolute path in order to be scriptable  
+        # from:  \path\to\app\pickles\*.pkl  
+        # ? must be absolute path in order to be scriptable? really?   
    
         mypath = os.path.join(APP_PATH, 'pickles', filename)  
         if os.path.isfile(mypath):  
@@ -62,4 +62,4 @@ def main():
     tables2html(*get_tables())  
     
 if __name__ == "__main__":  
-    main()  
+    main() 
