@@ -8,7 +8,8 @@ import argparse
 import base64 
 from operator import itemgetter, lt, le, gt, ge  
 
-import hilo  
+import hilo
+import tops2html 
 
 # helper functions
 def pct2float(pct):  
@@ -205,7 +206,8 @@ def main():
     make_table(topX_cheap, 'El Chipo, pct_BW < 25%', 'cheap')  
 
     # top10_expensive = list(reversed(all_sorted_by_price[-10:]))  
-    # make_table(top10_expensive, 'DUUR!')  
+    # make_table(top10_expensive, 'DUUR!')
+    tops2html.tables2html(*tops2html.get_tables())
 
 if __name__ == "__main__":  
     main()  
