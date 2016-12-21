@@ -11,6 +11,8 @@ from operator import itemgetter, lt, le, gt, ge
 import hilo
 import tops2html 
 
+APP_PATH = os.path.join('.')
+
 # helper functions
 def pct2float(pct):  
     return float(pct.replace(',', '.').strip('%'))/100  
@@ -21,7 +23,10 @@ def txt2float(numtext):
 def make_path(filename, dir='pickles'):
     if not os.path.exists(dir):
         os.makedirs(dir)
-    return '.\\{}\\{}.pkl'.format(dir, filename)
+
+    file = '{}.pkl'.format(filename)
+    picklepath = os.path.join(APP_PATH, dir, file)
+    return picklepath
     
 def save_thing(thing, path):
     with open(path, 'wb') as f:
