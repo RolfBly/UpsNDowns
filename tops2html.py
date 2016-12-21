@@ -3,7 +3,8 @@ import os
 import datetime  
 from jinja2 import Environment, FileSystemLoader  
 
-APP_PATH = os.path.join('.')  
+APP_PATH = os.path.join(os.sep, 'pathto', 'appdir')  
+WEB_PATH = os.path.join(os.sep, 'pathto', 'webapps', 'templates')
 
 def get_tables():  
     '''retrieves table data from pickles and the last pickle's modify date'''  
@@ -57,9 +58,12 @@ def tables2html(tablelist, rundate):
     outfile = os.path.join(APP_PATH, 'main_table.html')  
     with open(outfile, 'w') as f:  
         f.write(html_output.encode('utf-8'))  
+        
+    copyfile(outfile, os.path.join(WEB_PATH, 'main_table.html'))        
 
 def main():  
     tables2html(*get_tables())  
     
 if __name__ == "__main__":  
+
     main() 
