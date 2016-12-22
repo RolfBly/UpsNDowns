@@ -11,7 +11,8 @@ from operator import itemgetter, lt, le, gt, ge
 import hilo
 import tops2html 
 
-APP_PATH = os.path.join(os.sep, opt, UpsNDowns)
+# find out where we are
+APP_PATH = os.path.dirname(os.path.realpath(__file__))
 
 # helper functions
 def pct2float(pct):  

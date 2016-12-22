@@ -3,8 +3,11 @@ import os
 import datetime  
 from jinja2 import Environment, FileSystemLoader  
 
-APP_PATH = os.path.join(os.sep, 'pathto', 'appdir')  
-WEB_PATH = os.path.join(os.sep, 'pathto', 'webapps', 'templates')
+# this is all you need to hand-edit
+WEB_PATH = os.path.join(os.sep, 'mnt', 'u1', 'ud', 'stox', 'stoxapp', 'templates')
+
+# this is so we can run this both stand-alone and as a callable
+APP_PATH = os.path.dirname(os.path.realpath(__file__))  
 
 def get_tables():  
     '''retrieves table data from pickles and the last pickle's modify date'''  
@@ -65,5 +68,4 @@ def main():
     tables2html(*get_tables())  
     
 if __name__ == "__main__":  
-
     main() 
