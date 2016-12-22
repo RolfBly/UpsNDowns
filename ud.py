@@ -22,8 +22,9 @@ def txt2float(numtext):
     return float(numtext.replace(',', '.'))  
     
 def make_path(filename, dir='pickles'):
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    pickledir = os.path.join(APP_PATH, 'pickles') 
+    if not os.path.exists(pickledir):
+        os.makedirs(pickledir)
 
     file = '{}.pkl'.format(filename)
     picklepath = os.path.join(APP_PATH, dir, file)
