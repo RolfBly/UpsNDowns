@@ -2,7 +2,7 @@
 import os  
 import datetime  
 from jinja2 import Environment, FileSystemLoader  
-from shutils import copyfile
+from shutil import copyfile
 
 # this is all you need to hand-edit
 WEB_PATH = os.path.join(os.sep, 'mnt', 'u1', 'ud', 'stox', 'stoxapp', 'templates')
