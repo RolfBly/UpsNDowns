@@ -4,18 +4,18 @@
     <tr>
       <th id="th1"> {{table[0][0]}}</th>
       {% for head in table[0][1:] %}
-        <th> {{ head }} </th>
+        <th>{{ '{:>8}'.format(head) }}</th>
       {% endfor %}        
     </tr>
     {% for line in table[1] %}
       <tr>
-        <td id="td1">{{ line[0] }} </td>
-        <td>{{ line[1] }} </td>
+        <td id="td1">{{ line[0] }}</td>
+        <td>{{ '{:>7}'.format(line[1]) }}</td>
         {% for item in line[2:5] %}
-          <td>{{ '%7.2f'|format(item) }} </td>
+          <td>{{ '{:7.2f}'.format(item) }}</td>
         {% endfor %}        
-        <td>{{ '%7.1f'|format(line[5]) }}%</td>
-        <td>{{ '%7.2f'|format(line[6]) }}</td>
+        <td>{{ '{:7.1f}%'.format(line[5]) }}</td>
+        <td>{{ '{:7.2f}'.format(line[6]) }}</td>
         <td>{{ line[7] }} </td>
       </tr>
     {% endfor %}        
