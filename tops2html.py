@@ -5,7 +5,8 @@ from jinja2 import Environment, FileSystemLoader
 from shutil import copyfile
 
 # this is all you need to hand-edit
-WEB_PATH = os.path.join(os.sep, 'mnt', 'u1', 'ud', 'stox', 'stoxapp', 'templates')
+# WEB_PATH = os.path.join(os.sep, 'mnt', 'u1', 'ud', 'stox', 'stoxapp', 'templates')
+WEB_PATH = os.path.join('O:', 'stoxsnschulz', 'stoxapp', 'templates')
 
 # this is so we can run this both stand-alone and as a callable
 APP_PATH = os.path.dirname(os.path.realpath(__file__))  
