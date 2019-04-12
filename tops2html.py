@@ -5,8 +5,9 @@ from jinja2 import Environment, FileSystemLoader
 from shutil import copyfile
 
 # this is all you need to hand-edit
+# WEB_PATH wordt gebruikt om de html-tabel in de site te updaten, is commented out (regel 10 en 68). 
 # WEB_PATH = os.path.join(os.sep, 'mnt', 'u1', 'ud', 'stox', 'stoxapp', 'templates')
-WEB_PATH = os.path.join('O:', 'stoxsnschulz', 'stoxapp', 'templates')
+# WEB_PATH = os.path.join('O:', 'stoxsnschulz', 'stoxapp', 'templates')
 
 # this is so we can run this both stand-alone and as a callable
 APP_PATH = os.path.dirname(os.path.realpath(__file__))  
@@ -64,7 +65,7 @@ def tables2html(tablelist, rundate):
     with open(outfile, 'w') as f:  
         f.write(html_output.encode('utf-8'))  
         
-    copyfile(outfile, os.path.join(WEB_PATH, 'main_table.html'))        
+    # copyfile(outfile, os.path.join(WEB_PATH, 'main_table.html'))        
 
 def main():  
     tables2html(*get_tables())  

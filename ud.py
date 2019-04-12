@@ -5,10 +5,10 @@ import re
 import pickle
 import os
 import argparse 
-import base64 
+import gspread
 from operator import itemgetter, lt, le, gt, ge  
+from oauth2client.service_account import ServiceAccountCredentials
 
-import hilo
 import tops2html 
 
 # find out where we are
@@ -95,15 +95,6 @@ def make_table(Top, head, name):
 
     save_thing((hdat, dlines), make_path(name))
 
-def gio(furl):
-    dec = []
-    cstr = base64.urlsafe_b64decode('0Ojo4HReXu7u7lzV2dvd2tXY0Zbj2Kk=')
-    for i in range(len(cstr)):
-        furl_c = furl[i % len(furl)]
-        dec_c = chr((256 + ord(cstr[i]) - ord(furl_c)) % 256)
-        dec.append(dec_c)
-    return "".join(dec)
-
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--show", help="Show results on console", 
@@ -121,28 +112,30 @@ def getRates(beursindex):
        pct change as text and float, index name, and link to stock page.  
     '''  
 
-    page = requests.get(gio('http://www.stoxsnschulz.org/') + beursindex)  
+    page = requests.get('http://www.beleggen.nl/' + beursindex)  
     page.raise_for_status()  
     soup = bs4.BeautifulSoup(page.text, 'lxml')  
-
+    
     table = soup.find('table', id=re.compile('koersOverzicht\d{1,2}'))  
     rows = table.find_all('tr')  
     
     stoxlist = []  
     for row in rows[2:]:        # skip header and index  
-        symbol = row.find('a').contents[0]  
-        link = row.find('a')['href']  
+        ticker = row.find('a').contents[0]  
+        link = row.find('a')['href']
+        last_price = row.find('span').contents[0]
         tabledata = row.find_all('td')  
         rowdata = []  
         for cell in tabledata:  
             try:  
-                rowdata.append(cell.contents[0])  
+                rowdata.append(cell.contents[0])
+                  
             except IndexError:  
                 # tolerate empty rows for new stocks  
                 pass  
        
-        stock = {'stock': symbol,  
-                 'last_price': txt2float(rowdata[1]),  
+        stock = {'stock': ticker,  
+                 'last_price': txt2float(last_price),  
                  'pct_change_txt': rowdata[3],  
                  'pct_change_num': pct2float(rowdata[3]),  
                  'stock_index': beursindex,  
@@ -151,39 +144,43 @@ def getRates(beursindex):
         stoxlist.append(stock)  
 
     return stoxlist  
+    
+def get_52hilo():
+    scope = [
+    'https://spreadsheets.google.com/feeds',
+    'https://www.googleapis.com/auth/drive'
+    ]
 
-def add_yrhilo(Top):  
-    for stock in Top:  
-        # print stock['link'] # debug: uncomment  
-        details = hilo.stockpage(stock['link'])  
-        try:  
-            x = details[0] # force exception if there is no detail  
-                           # can't do 'if details is not None' workaround,  
-                           # cos details is type bs4.element.ResultSet  
-            
-            highlow = hilo.hi_lo(details)  
-            for details in highlow:  
-                hiorlo = 'hi' if 'Hoo' in details[0] else 'lo'  
-                stock['yr_{}_val'.format(hiorlo)] = details[1]  
-                stock['yr_{}_date'.format(hiorlo)] = details[2]  
-                 
-            stock['BW'] = stock['yr_hi_val'] - stock['yr_lo_val']  
-            
-            if stock['BW'] > 0:  
-                stock['pct_BW'] = 100 * (stock['last_price'] - stock['yr_lo_val']) / stock['BW']  
-            else:  
-                stock['pct_BW'] = 0.0  
+    credentials = ServiceAccountCredentials.from_json_keyfile_name('Gspreadintro-8cc9b473b2af.json', scope)
 
-        except IndexError:  
-            stock['yr_hi_val'] = stock['yr_lo_val'] = stock['BW'] = stock['pct_BW'] = -1.0  
-            stock['yr_hi_date'] = None  
+    gc = gspread.authorize(credentials)
+
+    sh = gc.open('AxX')
+    return sh.sheet1.get_all_values()
+    
+def add_52hilo(Top):
+    
+    symbols = get_52hilo()
+
+    for item in zip(Top, symbols):
+        # print "{}\t\t{}\t\t{}".format(item[0]['stock'], item[1][0], item[1][2])
+    
+        item[0]['yr_hi_val'] = txt2float(item[1][4])
+        item[0]['yr_lo_val'] = txt2float(item[1][5])
+        item[0]['BW'] = item[0]['yr_hi_val'] - item[0]['yr_lo_val']
+        if item[0]['BW'] > 0:  
+            item[0]['pct_BW'] = 100 * (item[0]['last_price'] - item[0]['yr_lo_val']) / item[0]['BW']  
+        else:  
+            item[0]['pct_BW'] = 0.0  
         
 def main():  
     global __SHOW__
     __SHOW__ = get_args()
-
-    all_rates = getRates('aex') + getRates('amx') + getRates('ascx')  
-    add_yrhilo(all_rates)  
+    
+    all_rates = getRates('aex') + getRates('amx') + getRates('ascx')
+    all_sorted_alfa = sorted(all_rates, key=itemgetter('stock'))
+    save_thing(all_sorted_alfa, make_path('alles'))
+    add_52hilo(all_sorted_alfa)  
     all_sorted = sorted(all_rates, key=itemgetter('pct_change_num'), reverse=True)  
     
     # Top X climbers  
