@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 ﻿beautifulsoup4 >= 4.6.3
 Jinja2 >= 2.10
 lxml >= 4.5.2
 requests >= 2.21.0
 gspread >= 3.1.0
 oauth2client >= 4.1.3
+=======
+﻿beautifulsoup4==4.5.1
+Jinja2==2.8
+lxml==3.6.0
+requests>=2.20.1
+gspread
+oauth2client
+>>>>>>> 6e1094d06bc01020771a9709edc894ced45303b6
